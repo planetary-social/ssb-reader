@@ -12,7 +12,7 @@ const {PubSub} = require('@google-cloud/pubsub');
 // Creates a client
 const pubsub = new PubSub();
 
-const topicName = 'my-topic';
+const topicName = 'messages-unprocessed';
 
 debug.enabled = true
 module.exports = {

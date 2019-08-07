@@ -7,7 +7,7 @@ const pubsub = new PubSub();
 /**
  * TODO(developer): Uncomment the following lines to run the sample.
  */
-const subscriptionName = 'my-sub';
+const subscriptionName = 'messages-unprocessed';
 const timeout = 60;
 
 // References an existing subscription
