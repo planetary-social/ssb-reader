@@ -55,7 +55,7 @@ ssbClient(async (err, sbot) => {
     pull.unique('key'),
     pull.asyncMap(async (msg, cb) => {
       // Not actually a map function, just using it for async.
-      publish(msg).then(async res => {
+      publish(msg).then(async () => {
         await set({ last: msg.timestamp }).catch(e => { throw e })
         log('Success: %s', msg.key)
         cb(null, msg)
