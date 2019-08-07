@@ -16,7 +16,7 @@ npm start
 
 ## Installation
 
-### Code
+### Source code
 
 ```shell
 git clone git@github.com:VerseApp/ssb-to-pubsub.git
