@@ -1,7 +1,8 @@
-const pull = require('pull-stream')
-
 let total = 0
-require('./')(pull.through(() => {
+const ssbReader = require('./')
+
+ssbReader('foo', () => new Promise((resolve) => {
   total += 1
   console.log(total)
+  resolve()
 }))
