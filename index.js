@@ -7,18 +7,17 @@ const util = require('util')
 const mkdirp = require('mkdirp')
 const debug = require('debug')
 
-const packageName = require('./package.json').name
 
-const log = debug(packageName)
+const log = debug('ssb-reader')
 
-module.exports = (through) => {
+module.exports = (name, through) => {
   log('Connecting to SSB server')
   ssbClient(async (err, sbot) => {
     if (err) throw err
     log('Connected without errors')
 
     log('Ensuring config directory exists')
-    const dir = path.join(os.homedir(), '.config', packageName)
+    const dir = path.join(os.homedir(), '.config', name)
     mkdirp.sync(dir)
 
     log('Ensuring that config file exists')
