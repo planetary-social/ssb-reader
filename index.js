@@ -10,7 +10,7 @@ const debug = require('debug')
 
 const log = debug('ssb-reader')
 
-module.exports = (name, through) => {
+module.exports = (name, promise) => {
   log('Connecting to SSB server')
   ssbClient(async (err, sbot) => {
     if (err) throw err
@@ -50,7 +50,16 @@ module.exports = (name, through) => {
       source,
       pull.filter(msg => !msg.sync),
       pull.unique('key'),
-      through,
+      pull.asyncMap((msg, cb) => {
+        promise(msg).then(async () => {
+          await set({ last: msg.timestamp }).catch(e => { throw e })
+          log('Success: %s', msg.key)
+          cb(null, msg)
+        }).catch((err) => {
+          log('Failure: %s', msg.key)
+          throw err
+        })
+      }),
       pull.drain()
     )
   })
