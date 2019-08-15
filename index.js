@@ -19,13 +19,13 @@ const reduce = (queue, data) => {
 
   return queue
 }
-    const cb = (err) => {
-      if (err) throw err
-    }
+const cb = (err) => {
+  if (err) throw err
+}
 
 module.exports = ({ name, max, write }) => {
   log('Connecting to SSB server')
-  ssbClient(async (err, sbot) => {
+  ssbClient(async (err, ssb) => {
     if (err) throw err
     log('Connected without errors')
 
@@ -53,13 +53,13 @@ module.exports = ({ name, max, write }) => {
     log('Starting from timestamp: %d', last)
 
     log('Creating link stream')
-    const source = sbot.createLogStream({
+    const source = ssb.createLogStream({
       gt: last,
       live: true
     })
 
     const asyncWrite = (messages, cb) => {
-      write(messages).then(async () => {
+      write({ messages, ssb }).then(async () => {
         const count = messages.length
 
         if (count === 0) {
@@ -76,7 +76,7 @@ module.exports = ({ name, max, write }) => {
         cb(err)
       })
     }
-    
+
     log('Starting pull from link stream')
     pull(
       source,
