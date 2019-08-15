@@ -5,12 +5,25 @@ const path = require('path')
 const os = require('os')
 const util = require('util')
 const mkdirp = require('mkdirp')
+const pullWrite = require('pull-write')
 const debug = require('debug')
-
 
 const log = debug('ssb-reader')
 
-module.exports = (name, promise) => {
+const reduce = (queue, data) => {
+  if (queue === null) {
+    queue = []
+  } else {
+    queue.push(data)
+  }
+
+  return queue
+}
+    const cb = (err) => {
+      if (err) throw err
+    }
+
+module.exports = ({ name, max, write }) => {
   log('Connecting to SSB server')
   ssbClient(async (err, sbot) => {
     if (err) throw err
@@ -45,22 +58,31 @@ module.exports = (name, promise) => {
       live: true
     })
 
+    const asyncWrite = (messages, cb) => {
+      write(messages).then(async () => {
+        const count = messages.length
+
+        if (count === 0) {
+          return cb(null)
+        } else {
+          const lastMessage = messages[count - 1]
+          await set({ last: lastMessage.timestamp }).catch(e => { throw e })
+
+          log('Success: %s messages', count)
+          cb(null)
+        }
+      }).catch((err) => {
+        log('Failure: %s', err)
+        cb(err)
+      })
+    }
+    
     log('Starting pull from link stream')
     pull(
       source,
       pull.filter(msg => !msg.sync),
       pull.unique('key'),
-      pull.asyncMap((msg, cb) => {
-        promise(msg).then(async () => {
-          await set({ last: msg.timestamp }).catch(e => { throw e })
-          log('Success: %s', msg.key)
-          cb(null, msg)
-        }).catch((err) => {
-          log('Failure: %s', msg.key)
-          throw err
-        })
-      }),
-      pull.drain()
+      pullWrite(asyncWrite, reduce, max, cb)
     )
   })
 }

@@ -15,7 +15,7 @@
   "scripts": {
     "lint": "eslint '**/*.js'",
     "fix": "eslint --fix '**/*.js'",
-    "test": "echo 'Please run tests in each sample directory.' && exit 1",
+    "test": "node test.js",
     "start": "node index.js"
   },
   "devDependencies": {
@@ -26,6 +26,7 @@
   "dependencies": {
     "atomic-file": "^2.0.1",
     "mkdirp": "^0.5.1",
-    "pull-stream": "^3.6.14"
+    "pull-stream": "^3.6.14",
+    "pull-write": "^1.1.4"
   }
 }

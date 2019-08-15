@@ -1,11 +1,21 @@
 # ssb-reader
 
-Read SSB messages and pass them to a pull-stream through.
+Process batches of SSB messages with promises.
 
 ## Usage
 
-```shell
-npm start
+```javascript
+const ssbReader = require('ssb-reader')
+
+ssbReader({
+  name: `vacuum`,
+  max: 1000,
+  write: (messages) => new Promise((resolve) => {
+    console.log(messages)
+    resolve()
+  })
+})
+
 ```
 
 ## Installation
