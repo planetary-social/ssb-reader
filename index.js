@@ -7,6 +7,7 @@ const util = require('util')
 const mkdirp = require('mkdirp')
 const pullWrite = require('pull-write')
 const debug = require('debug')
+const cpuThrottle = require('pull-cpu-throttle')
 
 const log = debug('ssb-reader')
 
@@ -80,6 +81,7 @@ module.exports = ({ name, max, write }) => {
     log('Starting pull from link stream')
     pull(
       source,
+      cpuThrottle(),
       pull.filter(msg => !msg.sync),
       pull.unique('key'),
       pullWrite(asyncWrite, reduce, max, cb)
