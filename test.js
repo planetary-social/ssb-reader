@@ -11,5 +11,9 @@ ssbReader({
     total += messages.length
     console.log({ total })
     setTimeout(resolve, 1000 + (1000 * Math.random()))
-  })
+  }),
+  remote: {
+    host: 'localhost',
+    port: 8008
+  }
 })

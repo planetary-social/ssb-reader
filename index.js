@@ -23,9 +23,26 @@ const cb = (err) => {
   if (err) throw err
 }
 
-module.exports = ({ name, max, write }) => {
+const defaultManifest = {
+  whoami: 'async',
+  createLogStream: 'source'
+}
+
+module.exports = ({
+  keys,
+  name,
+  max,
+  write,
+  remote: {
+    host,
+    port,
+    key,
+    caps,
+    manifest = defaultManifest
+  } = {}
+}) => {
   log('Connecting to SSB server')
-  ssbClient(async (err, ssb) => {
+  ssbClient(keys, { host, port, key, caps, manifest }, async (err, ssb) => {
     if (err) throw err
     log('Connected without errors')
 
