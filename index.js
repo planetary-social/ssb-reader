@@ -37,7 +37,7 @@ module.exports = ({
     host,
     port,
     key,
-    caps,
+    caps, // Currently `caps` **does not work**. Use `~/.ssb/config` instead.
     manifest = defaultManifest
   } = {}
 }) => {
