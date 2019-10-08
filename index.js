@@ -60,30 +60,32 @@ module.exports = ({
     const set = util.promisify(file.set)
 
     log('Getting previous config')
-    const { last } = await get().catch(async () => {
+    let { last } = await get().catch(async () => {
       log('Creating new config')
       const newValue = { last: 0 }
       await set(newValue)
       return newValue
     })
 
-    log('Starting from timestamp: %d', last)
+    log('Starting from seq: %d', last)
 
     log('Creating link stream')
     const source = ssb.createLogStream({
-      gt: last,
+      seq: last,
       live: true
     })
 
     const asyncWrite = (messages, cb) => {
       write({ messages, ssb }).then(async () => {
+        log('Write finished')
         const count = messages.length
 
         if (count === 0) {
           return cb(null)
         } else {
-          const lastMessage = messages[count - 1]
-          await set({ last: lastMessage.timestamp }).catch(e => { throw e })
+          last += count
+          log('Setting new seq: %s', last)
+          await set({ last }).catch(e => { throw e })
 
           log('Success: %s messages', count)
           cb(null)
@@ -97,8 +99,6 @@ module.exports = ({
     log('Starting pull from link stream')
     pull(
       source,
-      pull.filter(msg => !msg.sync),
-      pull.unique('key'),
       pullWrite(asyncWrite, reduce, max, cb)
     )
   })
