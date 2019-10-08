@@ -72,7 +72,8 @@ module.exports = ({
     log('Creating link stream')
     const source = ssb.createLogStream({
       seq: last,
-      live: true
+      live: true,
+      keys: true
     })
 
     const asyncWrite = (messages, cb) => {

@@ -7,7 +7,6 @@ ssbReader({
   name: `foo${randomHex}`,
   max: 1000,
   write: ({ messages, ssb }) => new Promise((resolve) => {
-    console.log('write called')
     ssb.whoami((err, val) => { console.log(err, val) })
     total += messages.length
     console.log({ total })
