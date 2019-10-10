@@ -10,16 +10,9 @@ const debug = require('debug')
 
 const log = debug('ssb-reader')
 
-const reduce = (queue, data) => {
-  if (queue === null) {
-    queue = []
-  } else {
-    queue.push(data)
-  }
+const reduce = undefined
 
-  return queue
-}
-const cb = (err) => {
+const pullCb = (err) => {
   if (err) throw err
 }
 
@@ -77,30 +70,34 @@ module.exports = ({
     })
 
     const asyncWrite = (messages, cb) => {
-      write({ messages, ssb }).then(async () => {
-        log('Write finished')
-        const count = messages.length
+      const count = messages.length
+      const isEmpty = count === 0
 
-        if (count === 0) {
-          return cb(null)
-        } else {
+      if (isEmpty === true) {
+        log('No messages to write')
+        cb(null)
+      } else {
+        log(`Attempting to write ${count} messages`)
+        write({ messages, ssb }).then(async () => {
+          log('Success: %s messages', count)
           last += count
           log('Setting new seq: %s', last)
           await set({ last }).catch(e => { throw e })
-
-          log('Success: %s messages', count)
           cb(null)
-        }
-      }).catch((err) => {
-        log('Failure: %s', err)
-        cb(err)
-      })
+        }).catch((err) => {
+          log('Failure: %s', err)
+          cb(err)
+        })
+      }
     }
 
     log('Starting pull from link stream')
     pull(
       source,
-      pullWrite(asyncWrite, reduce, max, cb)
+      pull.through(() => {
+        log('New message!')
+      }),
+      pullWrite(asyncWrite, reduce, max, pullCb)
     )
   })
 }
