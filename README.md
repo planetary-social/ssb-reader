@@ -23,7 +23,7 @@ ssbReader({
 ### Source code
 
 ```shell
-git clone git@github.com:VerseApp/ssb-reader.git
+git clone https://github.com/planetary-social/ssb-reader.git
 cd ssb-reader
 ```
 
