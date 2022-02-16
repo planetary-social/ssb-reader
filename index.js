@@ -71,7 +71,7 @@ module.exports = ({
 
     log('Creating link stream')
     const source = ssb.createLogStream({
-      gt: last,
+      gte: last,
       live: true
     })
 
@@ -80,13 +80,14 @@ module.exports = ({
         const count = messages.length
 
         if (count === 0) {
-          return cb(null)
+          log("0 new messages")
+          return cb()
         } else {
           const lastMessage = messages[count - 1]
           await set({ last: lastMessage.timestamp }).catch(e => { throw e })
 
           log('Success: %s messages', count)
-          cb(null)
+          cb()
         }
       }).catch((err) => {
         log('Failure: %s', err)
