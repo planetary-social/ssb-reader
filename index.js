@@ -12,7 +12,7 @@ const log = debug('ssb-reader')
 
 const reduce = (queue, data) => {
   if (queue === null) {
-    queue = []
+    queue = [data]
   } else {
     queue.push(data)
   }
@@ -81,13 +81,13 @@ module.exports = ({
 
         if (count === 0) {
           log("0 new messages")
-          return cb()
+          return cb(null)
         } else {
           const lastMessage = messages[count - 1]
           await set({ last: lastMessage.timestamp }).catch(e => { throw e })
 
           log('Success: %s messages', count)
-          cb()
+          cb(null)
         }
       }).catch((err) => {
         log('Failure: %s', err)
