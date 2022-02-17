@@ -12,7 +12,11 @@ const log = debug('ssb-reader')
 
 const reduce = (queue, data) => {
   if (queue === null) {
-    queue = [data]
+    if (data === null) {
+      queue = []
+    } else {
+      queue = [data]
+    }
   } else {
     queue.push(data)
   }
