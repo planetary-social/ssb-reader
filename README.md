@@ -20,6 +20,8 @@ ssbReader({
 
 ## Installation
 
+ssb-reader wants write access to $HOME/.config/ssb-to-pubsub/status.json so it can save the timestamp of the last processed message. This allows it to pick up where it left off after a restart.
+
 ### Source code
 
 ```shell
